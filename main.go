@@ -26,17 +26,26 @@ func main() {
 	db := initDatabase()
 
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db) //Can use mock at this point
-	customerRepositoryMock := repository.NewCustomerRepositoryMock()
-	_ = customerRepositoryMock
-	_ = customerRepositoryDB
+	// customerRepositoryMock := repository.NewCustomerRepositoryMock()
+	// _ = customerRepositoryMock
+	// _ = customerRepositoryDB
 
 	customerService := service.NewCustomerService(customerRepositoryDB)
 	customerHandler := handler.NewCustomerHandler(customerService)
+	
+
+	accountRepositoryDB := repository.NewAccountRepositoryDB(db)
+	accountService := service.NewAccountService(accountRepositoryDB)
+	accountHandler := handler.NewAccountHandler(accountService)
+
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/cutomers", customerHandler.GetCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/cutomers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
+	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
+
+	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts", accountHandler.GetAccounts).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts" , accountHandler.NewAccount).Methods(http.MethodPost)
 
 	// log.Printf("Banking service started at port %v", viper.GetInt("app.port"))
 	logs.Info("Banking service started at port " + viper.GetString("app.port"))

@@ -24,3 +24,10 @@ func NewUnexspected () error {
 		Message: "unexspected error",
 	}
 }
+
+func NewValidationError(message string) error {
+	return AppError {
+		Code: http.StatusUnprocessableEntity,
+		Message: message,
+	}
+}
